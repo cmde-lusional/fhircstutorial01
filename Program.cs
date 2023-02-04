@@ -1,4 +1,4 @@
-// See https://aka.ms/new-console-template for more information
+﻿// See https://aka.ms/new-console-template for more information
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Serialization;
 using Hl7.Fhir.Rest;
@@ -17,12 +17,11 @@ var settings = new FhirClientSettings
 var fhirClient = new FhirClient(_fhirServer, settings);
 
 
-//// GETTING PATIENTS + ENCOUNTER FROM A FIRE SERVER
+//// GETTING PATIENTS FROM A FIRE SERVER
 // getting all bundles for specific patient name 
-Bundle patientBundle = fhirClient.Search<Patient>(new string[] {"name=max"});
+Bundle patientBundle = fhirClient.Search<Patient>(new string[] {"name=chris"});
 
 int pn = 0;
-List<string> pwe = new List<string>();
 
 // looping over the bundle
 while (patientBundle != null)
@@ -37,26 +36,13 @@ while (patientBundle != null)
         if (entry.Resource != null)
         {
             Patient patient = (Patient)entry.Resource;
-
-            Bundle encounterBundle = fhirClient.Search<Encounter>(new string[] { $"subject=Patient/{patient.Id}" });
-            
-            if (encounterBundle.Total == 0)
-            {
-                continue;
-            }
-            
-            pwe.Add(patient.Id);
-
             Console.WriteLine($" ID: {patient.Id}");
-            
             if (patient.Name.Count > 0)
             {
                 Console.WriteLine($" Name: {patient.Name[0].ToString()}");
             }
-            
-            Console.WriteLine($"Total: {encounterBundle.Total} Entry count: {encounterBundle.Entry.Count}");
         }
-        
+
         pn++;
     
     }
